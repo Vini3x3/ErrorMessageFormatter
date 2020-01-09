@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="jumbotron text-center">
+  <h1>Error Message Formatter</h1>
+  <p>Light-weighted Formatter displays neat and tidy error messages </p>
+</div>
+
+<div class="container">
+  <div class="row">
+    <h1>Settings <button data-toggle="collapse" data-target="#settings" class="btn btn-default"><i class="fa fa-angle-down" aria-hidden="true"></i></button></h1>
+
+
+    <div id="settings" class="collapse in">
+
+
+      <div class="col-sm-4">
+        <h3>Programming Language</h3>
+        <div class="radio">
+          <label><input type="radio" name="language" value ="python" checked>Python</label>
+        </div>
+        <div class="radio">
+          <label><input type="radio" name="language" value ="javascript">JavaScript</label>
+        </div>
+        <div class="radio">
+          <label><input type="radio" name="language" value ="php">PHP</label>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <h3>Theme</h3>
+        <p class="font-weight-bold"></p>
+        <!-- <input type="text" name="directory" value="" style="min-width: 100%"> -->
+        <!-- <p class="font-weight-bold">Filter File</p> -->
+        <!-- <input type="text" name="" value="" style="min-width: 100%"> -->
+        <!-- <input type="text" name="" value="" style="min-width: 100%"> -->
+      </div>
+      <div class="col-sm-4">
+        <h3>Format Mode</h3>
+        <div class="radio">
+          <label><input type="radio" name="mode" value="display_all" checked>Display All</label>
+        </div>
+        <div class="radio">
+          <label><input type="radio" name="mode" value="filter_file">Filter File</label>
+        </div>
+        <div class="radio">
+          <label><input type="radio" name="mode" value="only_target_file">Only Target File</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-4">
+          <h3>File</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-4">
+          <p><b>Directory</b></p>
+          <input type="text" name="directory" value="" style="min-width: 100%">
+          <input type="checkbox" name="trim" id="trim_input" checked>
+          <label for="trim_input">Trim File Name</label>
+        </div>
+        <div class="col-sm-4">
+          <table class="table table-hover" id="filter_table">
+            <thead>
+              <tr>
+                <th>Filter File</th>
+                <th>
+                  <button type="button" name="button" class="btn btn-default" onclick="appendRow('filter_table')"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                  <button type="button" name="button" class="btn btn-default" onclick="clearTable('filter_table')"><i class="fa fa-eraser"></i></button>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <input type="text" style="min-width: 100%">
+                </td>
+                <td>
+                  <button type="button" name="button" class="btn btn-default" onclick="addRow(this)"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                  <button type="button" name="button" class="btn btn-default" onclick="deleteRow(this)"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="col-sm-4">
+          <table class="table table-hover" id="target_table">
+            <thead>
+              <tr>
+                <th>Target File</th>
+                <th>
+                  <button type="button" name="button" class="btn btn-default" onclick="appendRow('target_table')"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                  <button type="button" name="button" class="btn btn-default" onclick="clearTable('target_table')"><i class="fa fa-eraser"></i></button>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <input type="text" style="min-width: 100%">
+                </td>
+                <td>
+                  <button type="button" name="button" class="btn btn-default" onclick="addRow(this)"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                  <button type="button" name="button" class="btn btn-default" onclick="deleteRow(this)"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+  <div class="row">
+    <h1>Error Message</h1>
+    <br>
+    <div class="col-sm-12">
+
+      <textarea name="error_msg" class="form-control" style="min-width: 100%" rows="10"></textarea>
+    </div>
+  </div>
+  <br>
+  <button class="btn btn-default" type="button" name="button" onclick="format()">Format <i class="fa fa-cog"></i></button>
+  <div class="row">
+    <h1>Result</h1>
+    <h3 id="error_main_msg">Main  Error Message</h3>
+    <table class="table table-hover" id="error_stack_table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">File</th>
+          <th scope="col">Line</th>
+          <th scope="col">Function</th>
+          <th scope="col">Code</th>
+        </tr>
+      </thead>
+      <tbody>
+    </tbody>
+  </table>
+  </div>
+</div>
+<script type="text/javascript">
+  function python_arrayize(error) {
+    return error.split('\n');
+  }
+  function python_stackFormatting(str_list) {
+
+    // str.substring(start, len)
+    // str.split(delimitor);
+    var i;
+    even_list = [];
+    odd_list = [];
+    final_list = [];
+
+    for (i=0; i<str_list.length; i++) {
+      if (i%2==0) {
+        even_list.push(str_list[i]);
+      } else {
+        odd_list.push(str_list[i]);
+      }
+    }
+
+    var start_pos = even_list[0].indexOf('File');
+
+    for (i=0; i<even_list.length; i++) {
+      even_list[i] = even_list[i].substring(start_pos);
+    }
+    for (i=0; i<odd_list.length; i++) {
+      odd_list[i] = odd_list[i].substring(start_pos+2);
+    }
+
+    for (i=0; i<even_list.length; i++) {
+      final_list[i] = even_list[i].split(',');
+      final_list[i].push(odd_list[i]);
+    }
+
+    // console.log(final_list);
+
+    for (i=0; i<final_list.length; i++) {
+      final_list[i][0] = final_list[i][0].substring(6, final_list[i][0].length-1);
+      final_list[i][1] = final_list[i][1].substring(6);
+      final_list[i][2] = final_list[i][2].substring(4);
+    }
+
+    // console.log(final_list);
+
+    return final_list;
+  }
+
+  function python_stackDisplay(tableArray, mode, trim, dir, filter_files, target_files) {
+    var switches;
+    if (mode=='display_all') {
+      switches = 0;
+    } else if (mode=='filter_file') {
+      if (filter_files[0] == "") {
+        switches = 0;
+      } else {
+        switches = 1;
+      }
+    } else if (mode=='only_target_file') {
+      if (target_files[0] == "") {
+        return [];
+      } else {
+        switches = 2;
+      }
+    } else {
+      switches = 0;
+    }
+
+    switch (switches) {
+      case 0:
+        var i;
+        finalTable = tableArray;
+        if (trim) {
+          for (i=0; i<finalTable.length; i++) {
+            finalTable[i][0] = finalTable[i][0].replace(dir, '');
+          }
+        }
+        break;
+      case 1:
+        finalTable = [];
+        var i,j;
+        var wanted = true;
+        for (i=0; i<tableArray.length; i++) {
+          wanted = true;
+          console.log(filter_files.length);
+          if (filter_files.length > 0) {
+            for (j=0; j<filter_files.length; j++) {
+              if (tableArray[i][0].includes(filter_files[j])) {
+                wanted = false;
+              }
+            }
+          } else {
+            wanted = true;
+          }
+          if (wanted) {
+            finalTable.push(tableArray[i]);
+          }
+        }
+        if (trim) {
+          for (i=0; i<finalTable.length; i++) {
+            finalTable[i][0] = finalTable[i][0].replace(dir, '');
+          }
+        }
+        break;
+      case 2:
+        finalTable = [];
+        var i,j;
+        var wanted = false;
+        for (i=0; i<tableArray.length; i++) {
+          wanted = false;
+          for (j=0; j<target_files.length; j++) {
+            if (tableArray[i][0].includes(target_files[j])) {
+              wanted = true;
+            }
+          }
+          if (wanted) {
+            finalTable.push(tableArray[i]);
+          }
+        }
+        if (trim) {
+          for (i=0; i<finalTable.length; i++) {
+            finalTable[i][0] = finalTable[i][0].replace(dir, '');
+          }
+        }
+        break;
+    }
+    return finalTable;
+  }
+
+  function php_arrayize(error) {
+      var i;
+      var stacktracestart = error.indexOf('Stack trace');
+      tableArray = [];
+      tableArray.push(error.substring(0, stacktracestart));
+      startOfstackTrace_str = 'Stack trace:';
+      stackstring = error.substring(stacktracestart + startOfstackTrace_str.length);
+      stackArray = stackstring.split(' #');
+      stackArray = stackArray.slice(1, stackArray.length);
+
+      for (i = 0; i < stackArray.length; i++) {
+          tableArray.push(stackArray[i]);
+      }
+      return tableArray;
+  }
+
+  function php_stackFormatting(tableArray) {
+      var i;
+      var stackArray = [];
+      var tempList = [];
+      for (i = 0; i < tableArray.length; i++) {
+
+          if (tableArray[i].includes('{main}') || tableArray[i].includes('thrown in')) {
+            var whiteSpace = tableArray[i].indexOf(' ');
+            var thrownin = tableArray[i].indexOf('thrown in ');
+            var online = tableArray[i].indexOf(' on line ');
+            tempList = [];
+            tempString = tableArray[i];
+            tempList.push(tempString.substring(0, whiteSpace)); // index
+            tempList.push(tempString.substring(thrownin + 10, online)); // file name
+            tempList.push(tableArray[i].substring(online + 8)); // line
+            tempList.push(tempString.substring(whiteSpace + 1, thrownin)); // function
+            tempList.push(''); // code
+            // console.log(tempList);
+            stackArray.push(tempList);
+          } else {
+            var whiteSpace = tableArray[i].indexOf(' ');
+            var openBlanket = tableArray[i].indexOf('(');
+            var closeBlanket = tableArray[i].indexOf('): ');
+            tempList = [];
+            tempString = tableArray[i];
+            tempList.push(tempString.substring(0, whiteSpace)); // index
+            tempList.push(tempString.substring(whiteSpace + 1, openBlanket)); // file name
+            tempList.push(tempString.substring(openBlanket + 1, closeBlanket)); //line
+            tempList.push(''); //function
+            tempList.push(tableArray[i].substring(closeBlanket + 3)); // code
+            // console.log(tempList);
+            stackArray.push(tempList);
+          }
+
+      }
+      return stackArray;
+  }
+
+  function python_display(finalTable, error_main_msg) {
+    var i,j;
+    var html = '';
+    var tbpdy = document.getElementById('error_stack_table').getElementsByTagName('tbody')[0];
+    tbpdy.innerHTML = '';
+
+    for (i=0; i<finalTable.length; i++) {
+      html = '';
+      html += '<tr>';
+      html += '<td>' + i + '</td>';
+      for (j=0; j<4; j++) {
+        html += '<td>' + finalTable[i][j].replace(/[\u00A0-\u9999<>\&]/gim, function(i) {  return '&#' + i.charCodeAt(0) + ';';}) + '</td>';
+      }
+      html += '</tr>';
+      // console.log(html);
+
+      var newRow = tbpdy.insertRow(-1);
+      newRow.innerHTML = html;
+    }
+    // console.log(error_main_msg);
+    $('#error_main_msg').html(error_main_msg);
+  }
+
+  function php_display(finalTable, error_main_msg) {
+    var i,j;
+    var html = '';
+    var tbpdy = document.getElementById('error_stack_table').getElementsByTagName('tbody')[0];
+    tbpdy.innerHTML = '';
+
+    for (i=0; i<finalTable.length; i++) {
+      html = '';
+      html += '<tr>';
+      for (j=0; j<5; j++) {
+        html += '<td>' + finalTable[i][j].replace(/[\u00A0-\u9999<>\&]/gim, function(i) {  return '&#' + i.charCodeAt(0) + ';';}) + '</td>';
+      }
+      var newRow = tbpdy.insertRow(-1);
+      newRow.innerHTML = html;
+    }
+    // console.log(error_main_msg);
+    $('#error_main_msg').html(error_main_msg);
+  }
+
+  function php_stackDisplay(tableArray, mode, trim, dir, filter_files, target_files) {
+    var switches;
+    if (mode=='display_all') {
+      switches = 0;
+    } else if (mode=='filter_file') {
+      if (filter_files[0] == "") {
+        switches = 0;
+      } else {
+        switches = 1;
+      }
+    } else if (mode=='only_target_file') {
+      if (target_files[0] == "") {
+        return [];
+      } else {
+        switches = 2;
+      }
+    } else {
+      switches = 0;
+    }
+
+    switch (switches) {
+      case 0:
+        var i;
+        var finalTable = tableArray;
+        if (trim) {
+          for (i=0; i<finalTable.length; i++) {
+            finalTable[i][1] = finalTable[i][1].replace(dir, '');
+          }
+        }
+        break;
+      case 1:
+        var finalTable = [];
+        var i,j;
+        var wanted = true;
+        for (i=0; i<tableArray.length; i++) {
+          wanted = true;
+          for (j=0; j<filter_files.length; j++) {
+            if (tableArray[i][1].includes(filter_files[j])) {
+              wanted = false;
+            }
+          }
+          if (wanted) {
+            finalTable.push(tableArray[i]);
+          }
+        }
+        if (trim) {
+          for (i=0; i<finalTable.length; i++) {
+            finalTable[i][1] = finalTable[i][1].replace(dir, '');
+          }
+        }
+        break;
+      case 2:
+        var finalTable = [];
+        var i,j;
+        var wanted = false;
+        for (i=0; i<tableArray.length; i++) {
+          wanted = false;
+          for (j=0; j<target_files.length; j++) {
+            if (tableArray[i][1].includes(target_files[j])) {
+              wanted = true;
+            }
+          }
+          if (wanted) {
+            finalTable.push(tableArray[i]);
+          }
+        }
+        if (trim) {
+          for (i=0; i<finalTable.length; i++) {
+            finalTable[i][1] = finalTable[i][1].replace(dir, '');
+          }
+        }
+        break;
+    }
+    return finalTable;
+  }
+
+
+  function format() {
+    var lang = $("input[name='language']:checked").val();
+    // console.log(lang)
+    var mode = $("input[name='mode']:checked").val();
+    // console.log(mode)
+    var trim = $("input[name='trim']:checked").length > 0;;
+    // console.log(trim)
+    var dir = $("input[name='directory']").val();
+    // console.log(directory)
+    var error = $("textarea[name='error_msg']").val();
+    // console.log(error);
+    var filter_list = $("#filter_table input");
+    var target_list = $("#target_table input");
+
+    var filter_files = [];
+    var target_files = [];
+
+    $.each( filter_list, function( index, item ) {
+      // console.log(typeof(item));
+      filter_files.push(filter_list.eq(index).val());
+    });
+    $.each( target_list, function( index, item ) {
+      // console.log(typeof(item));
+      target_files.push(target_list.eq(index).val());
+    });
+
+    switch (lang) {
+      case 'python':
+        // python_format(mode, trim, dir, error, filter_files, target_files);
+        var tableArray = python_arrayize(error);
+        var stackArray = python_stackFormatting(tableArray.slice(1,-1));
+        var error_main_msg = tableArray[tableArray.length-1];
+        var displayArray = python_stackDisplay(stackArray, mode, trim, dir, filter_files, target_files);
+        python_display(displayArray, error_main_msg);
+      　break;
+      case 'javascript':
+        javascript_error(mode, trim, dir, error, filter_files, target_files);
+      　break;
+      case 'php':
+        var tableArray = php_arrayize(error);
+        var stackArray = php_stackFormatting(tableArray.slice(1));
+        var error_main_msg = tableArray[0];
+        var end_str = ' in';
+        error_main_msg = error_main_msg.substring(0, error_main_msg.indexOf(end_str));
+        console.log(error_main_msg);
+        console.log(stackArray);
+        var displayArray = php_stackDisplay(stackArray, mode, trim, dir, filter_files, target_files);
+        php_display(displayArray, error_main_msg);
+      　break;
+      default:
+        python_raise_error('lang');
+    }
+  }
+  function addRow(row) {
+    var table = row.closest("table");
+    var rowIndex = row.closest("tr").rowIndex;
+    var newRow = table.insertRow(rowIndex+1);
+    newRow.innerHTML = '<td>      <input type="text" style="min-width: 100%">    </td>    <td>      <button type="button" name="button" class="btn btn-default" onclick="addRow(this)"><i class="fa fa-plus" aria-hidden="true"></i></button>      <button type="button" name="button" class="btn btn-default" onclick="deleteRow(this)"><i class="fa fa-trash" aria-hidden="true"></i></button>    </td>';
+  }
+  function appendRow(table_id) {
+    var table = document.getElementById(table_id);
+    var newRow = table.insertRow(-1);
+    newRow.innerHTML = '<td>      <input type="text" style="min-width: 100%">    </td>    <td>      <button type="button" name="button" class="btn btn-default" onclick="addRow(this)"><i class="fa fa-plus" aria-hidden="true"></i></button>      <button type="button" name="button" class="btn btn-default" onclick="deleteRow(this)"><i class="fa fa-trash" aria-hidden="true"></i></button>    </td>';
+  }
+
+  function deleteRow(row) {
+    var table = row.closest("table");
+    var rowIndex = row.closest("tr").rowIndex;
+    table.deleteRow(rowIndex);
+  }
+  function clearTable(table_id) {
+    var tbody = document.getElementById(table_id).getElementsByTagName('tbody')[0];
+    // console.log(tbody);
+    tbody.innerHTML = '<td>      <input type="text" name="" value="" style="min-width: 100%">    </td>    <td>      <button type="button" name="button" class="btn btn-default" onclick="addRow(this)"><i class="fa fa-plus" aria-hidden="true"></i></button>      <button type="button" name="button" class="btn btn-default" onclick="deleteRow(this)"><i class="fa fa-trash" aria-hidden="true"></i></button>    </td>';
+  }
+
+</script>
+</body>
+</html>

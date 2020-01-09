@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Error Message Formatter</title>  
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- jquery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <!-- bootstrap -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  <!-- font awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!-- dom-to-image -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+  <!-- filesaver -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+</head>
+<body>    
+<div class="jumbotron text-center">
+  <h1 class="display-1">Error Message Formatter</h1>
+  <h3 class="display-5 font-weight-lighter">Light-weighted Formatter displays neat and tidy error messages </h3>
+</div>
+<div class="container">
+    <h1>Settings <button data-toggle="collapse" data-target="#settings" class="btn btn-default"><i class="fa fa-angle-down" aria-hidden="true"></i></button></h1>
+    <div class="container" id="settings" class="collapse in">
+        <div class="row">
+            <div class="col-sm-4">
+                <h3>Programming Language</h3>
+                <div class="radio">
+                    <label><input type="radio" name="input_lang" value ="python" checked>Python</label>
+                </div>        
+                <div class="radio">
+                    <label><input type="radio" name="input_lang" value ="php">PHP</label>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <h3>Theme</h3>        
+                <div class="radio">
+                    <label><input type="radio" name="input_display_theme" value="light" checked onclick="display_theme()">Light Theme</label>
+                </div>
+                <div class="radio">
+                    <label><input type="radio" name="input_display_theme" value="dark" onclick="display_theme()">Dark Theme</label>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <h3>Format Mode</h3>
+                <div class="radio">
+                    <label><input type="radio" name="input_display_mode" value="display_all" checked>Display All</label>
+                </div>
+                <div class="radio">
+                    <label><input type="radio" name="input_display_mode" value="filter_file">Filter File</label>
+                </div>
+                <div class="radio">
+                    <label><input type="radio" name="input_display_mode" value="only_target_file">Only Target File</label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">                
+                <div class='row'>
+                    <div class="col-8">
+                        <h3>Directories</h3>
+                    </div>
+                    <div class="col-4">
+                            <button type="button" name="button" class="btn btn-default" onclick="input_appendRow('table_directories')"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                        <button type="button" name="button" class="btn btn-default" onclick="input_clearTable('table_directories')"><i class="fa fa-eraser"></i></button>
+                    </div>                    
+                </div>
+                <table class="table table-hover" id="table_directories">                    
+                    <tbody>
+                    <tr>
+                        <td>
+                        <input type="text" style="min-width: 100%">
+                        </td>
+                        <td>
+                        <button type="button" name="button" class="btn btn-default" onclick="input_addRow(this)"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                        <button type="button" name="button" class="btn btn-default" onclick="input_deleteRow(this)"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-sm-4">                
+                <div class='row'>
+                    <div class="col-8">
+                        <h3>Filter Files</h3>
+                    </div>
+                    <div class="col-4">
+                            <button type="button" name="button" class="btn btn-default" onclick="input_appendRow('table_filter_files')"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                            <button type="button" name="button" class="btn btn-default" onclick="input_clearTable('table_filter_files')"><i class="fa fa-eraser"></i></button>
+                    </div>
+                </div>
+                <table class="table table-hover" id="table_filter_files">                    
+                    <tbody>
+                    <tr>
+                        <td>
+                        <input type="text" style="min-width: 100%">
+                        </td>
+                        <td>
+                        <button type="button" name="button" class="btn btn-default" onclick="input_addRow(this)"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                        <button type="button" name="button" class="btn btn-default" onclick="input_deleteRow(this)"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-sm-4">
+                <div class='row'>
+                    <div class="col-8">
+                        <h3>Target Files</h3>
+                    </div>
+                    <div class="col-4">
+                            <button type="button" name="button" class="btn btn-default" onclick="input_appendRow('table_target_files')"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                            <button type="button" name="button" class="btn btn-default" onclick="input_clearTable('table_target_files')"><i class="fa fa-eraser"></i></button>
+                    </div>                    
+                </div>                
+                <table class="table table-hover" id="table_target_files">                    
+                    <tbody>
+                    <tr>
+                        <td>
+                        <input type="text" style="min-width: 100%">
+                        </td>
+                        <td>
+                        <button type="button" name="button" class="btn btn-default" onclick="input_addRow(this)"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                        <button type="button" name="button" class="btn btn-default" onclick="input_deleteRow(this)"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+  <div class="row">
+    <div class="col-sm-12">
+        <h1>Error Message</h1>            
+        <textarea name="input_raw_error_str" class="form-control" style="min-width: 100%" rows="10"></textarea>
+    </div>
+  </div>
+  <br>
+  <button class="btn btn-default" type="button" name="button" onclick="container()">Format <i class="fa fa-cog"></i></button>
+  <button class="btn btn-default" type="button" name="button" onclick="screencap()">Download as PNG <i class="fa fa-download"></i></button>
+  
+  
+  <div class="row" id="output">
+    <div class="col-sm-12">
+        <h1>Result</h1>      
+        <h3 id="output_error_msg">Main  Error Message</h3>
+        <table class="table table-hover" id="output_stack_trace_table">
+            <thead>
+                <tr>
+                <th scope="col">#</th>
+                <th scope="col">File</th>
+                <th scope="col">Line</th>
+                <th scope="col">Function</th>
+                <th scope="col">Code</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>    
+  </div>
+
+  <div class="no_stack_trace" style="text-align:center">
+    <h1 class="display-1">        
+      <span class="fa-stack" text-align='center'>              
+        <i class="fa fa-circle-thin fa-stack-2x"></i>
+        <i class="fa fa-code fa-stack-1x"></i>
+      </span>
+    </h1>
+    <h5>No Stack Trace</h5>
+  </div>
+
+</div>
+
+<script type="text/javascript">
+
+  // formatter module
+
+  function container() {
+    var settings = extractor();
+    var raw_error_str = $("textarea[name='input_raw_error_str']").val();
+    if (raw_error_str.trim() == '') {
+      alert('Error: Empty Error Message');
+      return;
+    }
+    var lines = line_breaker(raw_error_str,settings);
+    if (lines.length<=0) {
+      alert('Error: Invalid Language Options');
+      return
+    }
+    var main_error_message = error_message_identifier(lines, settings);    
+    var stack_trace_lines = stack_trace_formatter(lines, settings);
+    var stack_trace_tables = stack_trace_visualizer(stack_trace_lines, settings);    
+    visualizer(stack_trace_tables, main_error_message, settings);
+    display_no_row();
+  }
+  function extractor() {
+    var i;
+    dir = [];
+    filter_files = [];
+    target_files = [];    
+    $.each($('#table_directories input'), function(index, value){
+      if (value.value.trim() != '')
+        dir.push(value.value.trim());
+    });
+    $.each($('#table_filter_files input'), function(index, value){
+      if (value.value.trim() != '')
+        filter_files.push(value.value.trim());
+    });
+    $.each($('#table_target_files input'), function(index, value){
+      if (value.value.trim() != '')
+        target_files.push(value.value.trim());
+    });
+
+    var settings = {
+      'language': $("input[name='input_lang']:checked").val(),
+      'mode': $("input[name='input_display_mode']:checked").val(),
+      'dir': dir,
+      'trim' : dir.length > 0,
+      'italic': filter_files.length > 0,
+      'bold': target_files.length > 0,      
+      'filter_files': filter_files,
+      'target_files': target_files,
+    };    
+    console.log(settings);
+    return settings;
+  }
+  function line_breaker(raw_error_str,settings) {    
+    switch(settings.language) {
+      case('python'):        
+        return python_arrayize(raw_error_str);        
+        break;
+      case('php'):
+        return php_arrayize(raw_error_str);
+        break;
+      default:               
+        return [];        
+        break;
+    }
+  }
+  function error_message_identifier(lines,settings) {
+    switch(settings.language) {
+      case('python'):        
+        return lines[lines.length-1];
+        break;
+      case('php'):        
+        var end_str = ' in';        
+        return lines[0].substring(0, lines[0].indexOf(end_str));
+        break;
+    }
+  }
+  function stack_trace_formatter(lines, settings) {
+    switch(settings.language) {
+      case('python'):
+        return python_stackFormatting(lines.slice(1,-1));
+        break;
+      case('php'):
+        return php_stackFormatting(lines.slice(1));        
+        break;
+      default:
+        alert('invalid language');
+        return [];
+        break;
+    }
+  }
+  function stack_trace_visualizer(stack_trace_table, settings) {
+    
+    var switches,temp;
+    if (settings.mode=='display_all') {
+      switches = 0;
+    } else if (settings.mode=='filter_file') {
+      if (settings.filter_files.length <= 0) {
+        switches = 0;
+      } else {
+        switches = 1;
+      }
+    } else if (settings.mode=='only_target_file') {
+      if (settings.target_files.length <= 0) {
+        return [];
+      } else {
+        switches = 2;
+      }
+    } else {
+      switches = 0;
+    }
+
+    // console.log(switches);
+
+    switch (switches) {
+      case 0:
+        var i;
+        finalTable = [];
+        
+        for (i=0; i<stack_trace_table.length; i++) {
+          if (settings.trim) {
+            stack_trace_table[i][0] = util_trim(stack_trace_table[i][0],settings.dir);
+          }          
+          temp = stack_trace_table[i];          
+          if (util_exist(stack_trace_table[i][0], settings.filter_files)) {
+            temp.push(1);
+          } else if (util_exist(stack_trace_table[i][0], settings.target_files)) {
+            temp.push(2);
+          } else {
+            temp.push(0);
+          }
+          finalTable.push(temp);
+        }        
+        
+        break;
+      case 1:
+        finalTable = [];
+        var i,j;        
+        for (i=0; i<stack_trace_table.length; i++) {
+          if (!util_exist(stack_trace_table[i][0], settings.filter_files)) {
+            temp = stack_trace_table[i];
+            if (util_exist(stack_trace_table[i][0], settings.target_files)) {
+              temp.push(2);
+            } else {
+              temp.push(0);
+            }
+            finalTable.push(temp);
+          }
+        }
+        if (settings.trim) {
+          for (i=0; i<finalTable.length; i++) {
+            finalTable[i][0] = util_trim(finalTable[i][0], settings.dir);
+          }
+        }
+        break;
+      case 2:
+        finalTable = [];
+        var i,j;                
+        for (i=0; i<stack_trace_table.length; i++) {
+          if (settings.trim) {
+            stack_trace_table[i][0] = util_trim(stack_trace_table[i][0], settings.dir);
+          }          
+          if (util_exist(stack_trace_table[i][0], settings.target_files)) {
+            temp = stack_trace_table[i];
+            temp.push(2);
+            finalTable.push(temp);
+          }
+        }
+        break;
+    }
+    // console.log(finalTable);
+    return finalTable;
+
+  }
+  function visualizer(stack_trace_tables, main_error_message, settings) {    
+    
+    $('#output_error_msg').text(main_error_message);
+        var i,j;
+        var html = '';        
+        var tbody = document.getElementById('output_stack_trace_table').getElementsByTagName('tbody')[0]
+        tbody.innerHTML = '';
+
+        // console.log(stack_trace_tables);
+
+        for (i=0; i<stack_trace_tables.length; i++) {
+          html = '';
+          html += '<tr>';
+          if (settings.italic && stack_trace_tables[i][4] == 1) {
+            html += '<td><i>' + i + '</i></td>';
+            for (j=0; j<4; j++) {
+              html += '<td><i>' + stack_trace_tables[i][j].replace(/[\u00A0-\u9999<>\&]/gim, function(i) {  return '&#' + i.charCodeAt(0) + ';';}) + '</i></td>';
+            }
+            html += '</tr>';
+          } else if (settings.bold && stack_trace_tables[i][4] == 2) {
+            html += '<td><b>' + i + '</b></td>';
+            for (j=0; j<4; j++) {
+              html += '<td><b>' + stack_trace_tables[i][j].replace(/[\u00A0-\u9999<>\&]/gim, function(i) {  return '&#' + i.charCodeAt(0) + ';';}) + '</b></td>';
+            }
+            html += '</tr>';
+          } else {
+            html += '<td>' + i + '</td>';
+            for (j=0; j<4; j++) {
+              html += '<td>' + stack_trace_tables[i][j].replace(/[\u00A0-\u9999<>\&]/gim, function(i) {  return '&#' + i.charCodeAt(0) + ';';}) + '</td>';
+            }
+            html += '</tr>';
+          }
+          var newRow = tbody.insertRow(-1);
+          newRow.innerHTML = html;
+        }
+  }
+
+  // sub module of formatter module
+
+  function python_arrayize(error) {
+    return error.split('\n');
+  }
+  
+  function python_stackFormatting(str_list) {
+
+    // str.substring(start, len)
+    // str.split(delimitor);
+    var i,j;
+    even_list = [];
+    odd_list = [];
+    final_list = [];
+
+    for (i=0; i<str_list.length; i++) {
+      if (i%2==0) {
+        even_list.push(str_list[i]);
+      } else {
+        odd_list.push(str_list[i]);
+      }
+    }
+
+    var start_pos = even_list[0].indexOf('File');    
+
+    for (i=0; i<even_list.length; i++) {
+      if (even_list[i].includes(', in ')) {
+        final_list[i] = util_extract(even_list[i], ['File "', '", line ', ', in ']);            
+      } else {
+        final_list[i] = util_extract(even_list[i], ['File "', '", line ']);        
+        final_list[i].splice(2, 0, "");
+      }      
+      final_list[i].push(odd_list[i].substring(start_pos+2));
+    }
+
+    // console.log(final_list);    
+
+    for (i=0; i<final_list.length; i++) {
+      for (j=0; j<final_list[i].length; j++) {
+        final_list[i][j] = final_list[i][j].trim();        
+      }      
+    }
+
+    // console.log(final_list);
+
+    return final_list;
+  }
+
+  function php_arrayize(error) {
+      var i;
+      var stacktracestart = error.indexOf('Stack trace');
+      tableArray = [];
+      tableArray.push(error.substring(0, stacktracestart));
+      startOfstackTrace_str = 'Stack trace:';
+      stackstring = error.substring(stacktracestart + startOfstackTrace_str.length);
+      stackArray = stackstring.split(' #');
+      stackArray = stackArray.slice(1, stackArray.length);
+
+      for (i = 0; i < stackArray.length; i++) {
+          tableArray.push(stackArray[i]);
+      }
+      return tableArray;
+  }
+
+  function php_stackFormatting(tableArray) {
+      var i;
+      var stackArray = [];
+      var tempList = [];
+      for (i = 0; i < tableArray.length; i++) {
+
+          if (tableArray[i].includes('{main}') || tableArray[i].includes('thrown in')) {                      
+
+            var temp = util_extract(tableArray[i], [' ','thrown in ',' on line ',]);
+            tempList = [];
+            tempList.push(temp[1]); //file name
+            tempList.push(temp[2]); //line
+            tempList.push(temp[0]); // function
+            tempList.push(''); //code
+            stackArray.push(tempList);
+
+          } else {            
+            var temp = util_extract(tableArray[i], [' ','(','): ',]);
+            tempList = [];
+            tempList.push(temp[0]); //file name
+            tempList.push(temp[1]); //line
+            tempList.push('');
+            tempList.push(temp[2]); //code
+            stackArray.push(tempList);
+          }
+      }
+      console.log(stackArray);
+      return stackArray;
+  }
+
+  // util module
+
+  function util_trim(file, trimArray) {
+    var i;
+    if (trimArray.length<=0) return file;
+    for (i=0; i<trimArray.length; i++) {
+      if (trimArray[i]!='')
+        file = file.replace(trimArray[i], '');
+    }
+    return file;
+  }
+
+  function util_exist(file, targetArray) {
+    var i;        
+    for (i=0; i<targetArray.length; i++) {
+      if (file.includes(targetArray[i])) {
+        return true;
+      }
+    }
+    return false;    
+  }
+
+  function util_extract(line, delimitor_array) {
+    var result = [];
+    var i;
+    
+    for (i=0; i<delimitor_array.length-1; i++) {
+      result.push( line.substring(line.indexOf(delimitor_array[i]) + delimitor_array[i].length, line.indexOf(delimitor_array[i+1])) );      
+    }
+    result.push( line.substring(line.indexOf(delimitor_array[i]) + delimitor_array[i].length));   
+    return result;
+  }
+
+  // input module
+
+  function input_addRow(row) {
+    var table = row.closest("table");
+    var rowIndex = row.closest("tr").rowIndex;
+    var newRow = table.insertRow(rowIndex+1);
+
+    // newRow.innerHTML = '<td>      <input type="text" style="min-width: 100%">    </td>    <td>      <button type="button" name="button" class="btn btn-default" onclick="input_addRow(this)"><i class="fa fa-plus" aria-hidden="true"></i></button>      <button type="button" name="button" class="btn btn-default" onclick="input_deleteRow(this)"><i class="fa fa-trash" aria-hidden="true"></i></button>    </td>';
+    
+    var theme = $("input[name='input_display_theme']:checked").val();
+    switch (theme) {
+      case 'dark':  
+        newRow.innerHTML = '<td>      <input type="text" style="min-width: 100%">    </td>    <td>      <button type="button" name="button" class="btn btn-dark" onclick="input_addRow(this)"><i class="fa fa-plus" aria-hidden="true"></i></button>      <button type="button" name="button" class="btn btn-dark" onclick="input_deleteRow(this)"><i class="fa fa-trash" aria-hidden="true"></i></button>    </td>';
+        break;
+      case 'light':
+        newRow.innerHTML = '<td>      <input type="text" style="min-width: 100%">    </td>    <td>      <button type="button" name="button" class="btn btn-default" onclick="input_addRow(this)"><i class="fa fa-plus" aria-hidden="true"></i></button>      <button type="button" name="button" class="btn btn-default" onclick="input_deleteRow(this)"><i class="fa fa-trash" aria-hidden="true"></i></button>    </td>';
+        break;
+    }
+  }
+  
+  function input_appendRow(table_id) {
+    var table = document.getElementById(table_id);
+    var newRow = table.insertRow(-1);
+    // newRow.innerHTML = '<td>      <input type="text" style="min-width: 100%">    </td>    <td>      <button type="button" name="button" class="btn btn-default" onclick="input_addRow(this)"><i class="fa fa-plus" aria-hidden="true"></i></button>      <button type="button" name="button" class="btn btn-default" onclick="input_deleteRow(this)"><i class="fa fa-trash" aria-hidden="true"></i></button>    </td>';
+    var theme = $("input[name='input_display_theme']:checked").val();
+    switch (theme) {
+      case 'dark':  
+        newRow.innerHTML = '<td>      <input type="text" style="min-width: 100%">    </td>    <td>      <button type="button" name="button" class="btn btn-dark" onclick="input_addRow(this)"><i class="fa fa-plus" aria-hidden="true"></i></button>      <button type="button" name="button" class="btn btn-dark" onclick="input_deleteRow(this)"><i class="fa fa-trash" aria-hidden="true"></i></button>    </td>';
+        break;
+      case 'light':
+        newRow.innerHTML = '<td>      <input type="text" style="min-width: 100%">    </td>    <td>      <button type="button" name="button" class="btn btn-default" onclick="input_addRow(this)"><i class="fa fa-plus" aria-hidden="true"></i></button>      <button type="button" name="button" class="btn btn-default" onclick="input_deleteRow(this)"><i class="fa fa-trash" aria-hidden="true"></i></button>    </td>';
+        break;
+    }
+    
+  }
+
+  function input_deleteRow(row) {
+    var table = row.closest("table");
+    var rowIndex = row.closest("tr").rowIndex;
+    table.deleteRow(rowIndex);    
+  }
+  
+  function input_clearTable(table_id) {
+    var tbody = document.getElementById(table_id).getElementsByTagName('tbody')[0];
+    // console.log(tbody);
+    tbody.innerHTML = '<td>      <input type="text" name="" value="" style="min-width: 100%">    </td>    <td>      <button type="button" name="button" class="btn btn-default" onclick="input_addRow(this)"><i class="fa fa-plus" aria-hidden="true"></i></button>      <button type="button" name="button" class="btn btn-default" onclick="input_deleteRow(this)"><i class="fa fa-trash" aria-hidden="true"></i></button>    </td>';    
+  }
+
+  // display module
+
+  function display_theme() {  
+    var theme = $("input[name='input_display_theme']:checked").val();
+    switch (theme) {
+      case 'dark':        
+        $('.container h1, .container h3, p, label').css('color','white');
+        $('table').addClass('table-dark');
+        $('body').css('background-color','#343a40');
+        $('button').attr('class','btn btn-dark');        
+        $('#output').attr('class','bg-dark');
+        $('.no_stack_trace').find('h5').css('color','white');
+        $('.no_stack_trace').find('h1').css('color','white');
+        break;
+    case 'light':
+        $('.container h1, h3, p, label').css('color','black');
+        $('table').removeClass('table-dark');
+        $('body').css('background-color','white');
+        $('button').attr('class','btn btn-default');
+        $('#output').attr('class','bg-white');
+        $('.no_stack_trace').find('h5').css('color','black');
+        break;
+    }
+  }
+
+  function display_no_row() {    
+    if ($('#output_stack_trace_table tbody').find('tr').length <= 0) {      
+      $('.no_stack_trace').show();
+    } else {      
+      $('.no_stack_trace').hide();
+    }
+
+  }
+
+  function screencap() {    
+    domtoimage.toBlob(document.getElementById('output'))
+        .then(function(blob) {
+            window.saveAs(blob, 'error.png');
+        });
+  }
+
+</script>
+</body>
+</html>
