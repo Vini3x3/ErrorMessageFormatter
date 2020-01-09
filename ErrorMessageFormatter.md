@@ -282,4 +282,4 @@ The formatter is not displaying well in mobile device, but still working well ex
 
 ## Credits
 
-Vincent Chu Chi Hang, Dec 2019 - Jan 2020, Copyright Reserved
+Vincent, Dec 2019 - Jan 2020, Copyright Reserved
